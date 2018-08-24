@@ -310,7 +310,7 @@ class CopyMapping(object):
                 del self.on_conflict[0:2]
                 update_columns = ', '.join(["{0} = EXCLUDED.{0}".format(col) for col in self.on_conflict])
                 return """
-                    ON CONFLICT ({0}) DO UPDATE SET {1};
+                    ON CONFLICT {0} DO UPDATE SET {1};
                     """.format(constraint, update_columns)
         else:
             return ";"
