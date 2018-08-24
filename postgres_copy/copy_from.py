@@ -33,7 +33,8 @@ class CopyMapping(object):
         encoding=None,
         ignore_conflicts=False,
         static_mapping=None,
-        on_conflict=[]
+        on_conflict=[],
+        temp_table_name_suffix=""
     ):
         # Set the required arguments
         self.model = model
@@ -90,7 +91,7 @@ class CopyMapping(object):
         self.validate_mapping()
 
         # Configure the name of our temporary table to COPY into
-        self.temp_table_name = "temp_%s" % self.model._meta.db_table
+        self.temp_table_name = "temp_%s" % (self.model._meta.db_table + "_" + temp_table_name_suffix)
 
         self.on_conflict = on_conflict
 
