@@ -32,7 +32,8 @@ class CopyMapping(object):
         force_null=None,
         encoding=None,
         ignore_conflicts=False,
-        static_mapping=None
+        static_mapping=None,
+        on_conflict=[]
     ):
         # Set the required arguments
         self.model = model
@@ -90,6 +91,8 @@ class CopyMapping(object):
 
         # Configure the name of our temporary table to COPY into
         self.temp_table_name = "temp_%s" % self.model._meta.db_table
+
+        self.on_conflict = on_conflict
 
     def save(self, silent=False, stream=sys.stdout):
         """
@@ -293,13 +296,22 @@ class CopyMapping(object):
     #
 
     def insert_suffix(self):
-        """
-        Preps the suffix to the insert query.
-        """
-        if self.ignore_conflicts:
-            return """
-                ON CONFLICT DO NOTHING;
-            """
+        # If on_conflict is not an empty list
+        if self.on_conflict:
+            # First item on list - Operation
+            if self.on_conflict[0] == 'DO NOTHING':
+                return """
+                    ON CONFLICT DO NOTHING;
+                """
+            elif self.on_conflict[0] == 'DO UPDATE':
+                # Second item on list - Constraint
+                constraint = self.on_conflict[1]
+                # Delete first two items on list. Only columns to be updated remain
+                del self.on_conflict[0:2]
+                update_columns = ', '.join(["{0} = EXCLUDED.{0}".format(col) for col in self.on_conflict])
+                return """
+                    ON CONFLICT ({0}) DO UPDATE SET {1};
+                    """.format(constraint, update_columns)
         else:
             return ";"
 
