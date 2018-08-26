@@ -316,7 +316,7 @@ class CopyMapping(object):
 
                 if self.static_mapping_on_conflict is not None:
                     update_columns += ', '
-                    update_columns += ', '.join(["{0} = \"{1}\"".format(col, self.static_mapping_on_conflict[col]) for col in self.static_mapping_on_conflict])
+                    update_columns += ', '.join(["{0} = '{1}'".format(col, self.static_mapping_on_conflict[col]) for col in self.static_mapping_on_conflict])
 
                 return """
                     ON CONFLICT {0} DO UPDATE SET {1};
