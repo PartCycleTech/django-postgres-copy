@@ -335,15 +335,13 @@ class CopyMapping(object):
         sql = """
             INSERT INTO "%(model_table)s" (%(model_fields)s) (
             SELECT %(temp_fields)s
-            FROM "%(temp_table)s")%(insert_suffix)s
+            FROM "%(temp_table)s") %(insert_suffix)s
         """
         options = dict(
             model_table=self.model._meta.db_table,
             temp_table=self.temp_table_name,
             insert_suffix=self.insert_suffix()
         )
-
-        print(sql)
 
         #
         # The model fields to be inserted into
