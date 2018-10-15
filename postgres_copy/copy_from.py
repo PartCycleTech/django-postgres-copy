@@ -307,12 +307,14 @@ class CopyMapping(object):
                     ON CONFLICT DO NOTHING;
                 """
             elif self.on_conflict[0] == 'DO UPDATE':
-                # Second item on list - Constraint
-                constraint = self.on_conflict[1]
-                # Delete first two items on list. Only columns to be updated remain
-                del self.on_conflict[0:2]
+                conflict_sql = self.on_conflict
 
-                update_columns = ', '.join(["{0} = EXCLUDED.{0}".format(col) for col in self.on_conflict])
+                # Second item on list - Constraint
+                constraint = conflict_sql[1]
+                # Delete first two items on list. Only columns to be updated remain
+                del conflict_sql[0:2]
+
+                update_columns = ', '.join(["{0} = EXCLUDED.{0}".format(col) for col in conflict_sql])
 
                 if self.static_mapping_on_conflict is not None:
                     update_columns += ', '
@@ -414,7 +416,6 @@ class CopyMapping(object):
 
         logger.debug("Running INSERT command")
         insert_sql = self.prep_insert()
-        print(insert_sql)
         logger.debug(insert_sql)
         cursor.execute(insert_sql)
         insert_count = cursor.rowcount
