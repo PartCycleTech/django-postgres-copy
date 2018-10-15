@@ -414,6 +414,7 @@ class CopyMapping(object):
 
         logger.debug("Running INSERT command")
         insert_sql = self.prep_insert()
+        print(insert_sql)
         logger.debug(insert_sql)
         cursor.execute(insert_sql)
         insert_count = cursor.rowcount
