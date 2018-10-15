@@ -343,6 +343,8 @@ class CopyMapping(object):
             insert_suffix=self.insert_suffix()
         )
 
+        print(sql)
+
         #
         # The model fields to be inserted into
         #
